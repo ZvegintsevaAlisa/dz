@@ -72,7 +72,7 @@ namespace Async
 
         static async Task<TaskA> DoTaskAC()
         {
-            // var t = await DoTaskAB();
+           
             wh.WaitOne();
             Console.WriteLine($"{DateTime.Now}: Started Task A_C");
             await Task.Delay(300);
@@ -82,7 +82,7 @@ namespace Async
 
         static async Task<TaskB> DoTaskBB()
         {
-            //var t = await DoTaskBA();
+         
             wh2.WaitOne();
             Console.WriteLine($"{DateTime.Now}: Started Task B_B");
             await Task.Delay(300);
@@ -94,8 +94,7 @@ namespace Async
 
         static async Task<TaskB> DoTaskBC()
         {
-            //await DoTaskBB();
-            //await DoTaskAC();
+
             WaitHandle.WaitAll(w);
             Console.WriteLine($"{DateTime.Now}: Started Task B_C");
             await Task.Delay(700);
@@ -104,7 +103,6 @@ namespace Async
         }
         static async Task<TaskB> DoTaskBD()
         {
-            //  await DoTaskBB();
             wh3.WaitOne();
             Console.WriteLine($"{DateTime.Now}: Started Task B_D");
             await Task.Delay(700);
