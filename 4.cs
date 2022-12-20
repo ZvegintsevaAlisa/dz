@@ -28,12 +28,12 @@ namespace ConsoleApp10
                     var res = nums.AsParallel().AsOrdered().WithDegreeOfParallelism(2)
                         .Select(calc)
                         .GroupBy(n => n % 10).Select(n => n.Sum()).OrderBy(n => n)
+                        .Where((n, index) => index >= 4 && index <=6 )
                         .ToArray();
                     stw.Stop();
                     Console.WriteLine($"Милисекунд: {stw.ElapsedMilliseconds}");
-                    if (res.Length < 5)
-                        Console.WriteLine("Меньше 5 элементов");
-                    else Console.WriteLine(res[4] + " " + res[5] + " " + res[6]);
+                    foreach (var r in res)
+                        Console.WriteLine(r + " ");
                     break;
                 case "2":
                     Stopwatch stw2 = new Stopwatch();
@@ -41,12 +41,12 @@ namespace ConsoleApp10
                     var res2 = nums.AsParallel().AsOrdered().WithDegreeOfParallelism(5)
                         .Select(calc)
                         .GroupBy(n => n % 10).Select(n => n.Sum()).OrderBy(n => n)
+                        .Where((n, index) => index >= 4 && index <= 6)
                         .ToArray();
                     stw2.Stop();
                     Console.WriteLine($"Милисекунд: {stw2.ElapsedMilliseconds}");
-                    if (res2.Length < 5)
-                        Console.WriteLine("Меньше 5 элементов");
-                    else Console.WriteLine(res2[4] + " " + res2[5] + " " + res2[6]);
+                    foreach (var r in res2)
+                        Console.WriteLine(r + " ");
                     break;
                 case "3":
                     Stopwatch stw3 = new Stopwatch();
@@ -54,12 +54,12 @@ namespace ConsoleApp10
                     var res3 = nums.AsParallel().AsOrdered().WithDegreeOfParallelism(15)
                         .Select(calc)
                         .GroupBy(n => n % 10).Select(n => n.Sum()).OrderBy(n => n)
+                        .Where((n, index) => index >= 4 && index <= 6)
                         .ToArray();
                     stw3.Stop();
                     Console.WriteLine($"Милисекунд: {stw3.ElapsedMilliseconds}");
-                    if (res3.Length < 5)
-                        Console.WriteLine("Меньше 5 элементов");
-                    else Console.WriteLine(res3[4] + " " + res3[5] + " " + res3[6]);
+                    foreach (var r in res3)
+                        Console.WriteLine(r + " ");
                     break;
             }
             Console.ReadLine();
