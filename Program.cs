@@ -1,82 +1,76 @@
-﻿using System.Threading;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-class Program
+namespace ConsoleApp10
 {
-    static EventWaitHandle wh = new AutoResetEvent(false);
-    static EventWaitHandle wh2 = new AutoResetEvent(false);
-    static EventWaitHandle wh3 = new AutoResetEvent(false);
-    static EventWaitHandle[] w = new EventWaitHandle[2] { wh, wh2 };
-    static void Main()
-    {
-        new Thread(TaskA_A).Start();
-        new Thread(TaskA_B).Start();
-        new Thread(TaskB_A).Start();
-        new Thread(TaskA_C).Start();
-        new Thread(TaskB_B).Start();
-        new Thread(TaskB_C).Start();
-        new Thread(TaskB_D).Start();
-    }
+   
+        class Program
+        {
+            static void Main(string[] args)
+            {
+            Random rnd = new Random();
+            int[] nums = new int[100];
+            for (int i = 0; i < nums.Length; i++)
+                nums[i] = rnd.Next(-10,10);
 
-    static void TaskA_A()
-    {
-        Console.WriteLine($"Task A started at {DateTime.Now}");
-        Thread.Sleep(1000);
-        Console.WriteLine($"Task A finished at {DateTime.Now}");
-        wh.Set();
-        wh2.Set();
-       
-    }
-    static void TaskA_B()
-    {   wh.WaitOne();
-        Console.WriteLine("Task A_B: Signal from A received");
-        Console.WriteLine($"Task A_B started at {DateTime.Now}");
-        Thread.Sleep(1000);
-        Console.WriteLine($"Task A_B finished at {DateTime.Now}");
-        wh.Set();
-    }
-    static void TaskB_A()
-    {
-        wh2.WaitOne();
-        Console.WriteLine("Task B_A: Signal from A received");
-        Console.WriteLine($"Task B_A started at {DateTime.Now}");
-        Thread.Sleep(300);
-        Console.WriteLine($"Task B_A finished at {DateTime.Now}");
-        wh2.Set();
-    }
-    static void TaskA_C()
-    {
-        wh.WaitOne();
-        Console.WriteLine("Task A_C: Signal from A_B received");
-        Console.WriteLine($"Task A_C started at {DateTime.Now}");
-        Thread.Sleep(300);
-        Console.WriteLine($"Task A_C finished at {DateTime.Now}");
-        wh.Set();
-    }
-    static void TaskB_B()
-    {
-        wh2.WaitOne();
-        Console.WriteLine("TaskB_B: Signal from B_A received");
-        Console.WriteLine($"Task B_B started at {DateTime.Now}");
-        Thread.Sleep(300);
-        Console.WriteLine($"Task B_B finished at {DateTime.Now}");
-        wh2.Set();
-        wh3.Set();
-    }
-    static void TaskB_C()
-    {   
-        WaitHandle.WaitAll(w);
-        Console.WriteLine("TaskB_C: Signals from B_B and A_C received");
-        Console.WriteLine($"Task B_C started at {DateTime.Now}");
-        Thread.Sleep(300);
-        Console.WriteLine($"Task B_C finished at {DateTime.Now}");
-    }
-    static void TaskB_D()
-    {
-        wh3.WaitOne();
-        Console.WriteLine("Task B_D: Signal from B_B received");
-        Console.WriteLine($"Task B_D started at {DateTime.Now}");
-        Thread.Sleep(300);
-        Console.WriteLine($"Task B_D finished at {DateTime.Now}");
+           
+            Console.WriteLine("1.Степень параллелизма=2.\n2.Степень параллелизма = 5.\n3.Степень параллелизма = 15");
+            string cmd = Console.ReadLine();
+            switch (cmd)
+            {
+                case "1":
+                    Stopwatch stw = new Stopwatch();
+                    stw.Start();
+                    var res = nums.AsParallel().AsOrdered().WithDegreeOfParallelism(2)
+                        .Select(calc)
+                        .GroupBy(n => n % 10).Select(n => n.Sum()).OrderBy(n => n)
+                        .ToArray();
+                    stw.Stop();
+                    Console.WriteLine($"Милисекунд: {stw.ElapsedMilliseconds}");
+                    if (res.Length < 5)
+                        Console.WriteLine("Меньше 5 элементов");
+                    else Console.WriteLine(res[4] + " " + res[5] + " " + res[6]);
+                    break;
+                case "2":
+                    Stopwatch stw2 = new Stopwatch();
+                    stw2.Start();
+                    var res2 = nums.AsParallel().AsOrdered().WithDegreeOfParallelism(5)
+                        .Select(calc)
+                        .GroupBy(n => n % 10).Select(n => n.Sum()).OrderBy(n => n)
+                        .ToArray();
+                    stw2.Stop();
+                    Console.WriteLine($"Милисекунд: {stw2.ElapsedMilliseconds}");
+                    if (res2.Length < 5)
+                        Console.WriteLine("Меньше 5 элементов");
+                    else Console.WriteLine(res2[4] + " " + res2[5] + " " + res2[6]);
+                    break;
+                case "3":
+                    Stopwatch stw3 = new Stopwatch();
+                    stw3.Start();
+                    var res3 = nums.AsParallel().AsOrdered().WithDegreeOfParallelism(15)
+                        .Select(calc)
+                        .GroupBy(n => n % 10).Select(n => n.Sum()).OrderBy(n => n)
+                        .ToArray();
+                    stw3.Stop();
+                    Console.WriteLine($"Милисекунд: {stw3.ElapsedMilliseconds}");
+                    if (res3.Length < 5)
+                        Console.WriteLine("Меньше 5 элементов");
+                    else Console.WriteLine(res3[4] + " " + res3[5] + " " + res3[6]);
+                    break;
+            }
+            Console.ReadLine();
+
+        }
+
+        static int calc(int i)
+            {
+                int result = i*(i+2);
+                return result;
+            }
+        
     }
 }
